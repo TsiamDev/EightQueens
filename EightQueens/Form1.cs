@@ -445,7 +445,7 @@ namespace EightQueens
             int inputSeed = ReadSeed();
             Console.WriteLine("Input seed " + inputSeed);
             BruteForceWrapper(inputSeed);
-            BruteForceUpdateTexts();
+            BruteForceUpdateTexts("Brute Force");
             InitializePictureBoxes();
         }
 
@@ -474,7 +474,7 @@ namespace EightQueens
             int inputSeed = ReadSeed();
             Console.WriteLine("Input seed " + inputSeed);
             BruteForce1onEachRowWrapper(inputSeed);
-            BruteForceUpdateTexts();
+            BruteForceUpdateTexts("1 Queen for each row");
             InitializePictureBoxes();
         }
 
@@ -485,7 +485,7 @@ namespace EightQueens
             Console.WriteLine("Input seed " + inputSeed);
             GeneratePermutationsWrapper();
             PermutationsSolutionWrapper(inputSeed);
-            BruteForceUpdateTexts();
+            BruteForceUpdateTexts("Permutations");
             InitializePictureBoxes();
         }
 
@@ -590,9 +590,9 @@ namespace EightQueens
             return userSeed;
         }
 
-        private void BruteForceUpdateTexts()
+        private void BruteForceUpdateTexts(string methodUsed)
         {
-            methodLabel.Text = "Method Used: Brute Force";
+            methodLabel.Text = "Method Used: " + methodUsed;
             exeTimeLabel.Text = exeTimeText;
         }
 
@@ -681,7 +681,7 @@ namespace EightQueens
             //Console.WriteLine("X length: " + barChartX.Count);
             //Console.WriteLine("Y length: " + barChartY.Count);
             UpdateBarChart(0, barChartYBruteForce, "Brute Force", barChart);
-            BruteForceUpdateTexts();
+            BruteForceUpdateTexts("Brute Force");
             InitializePictureBoxes();
         }
 
@@ -705,7 +705,7 @@ namespace EightQueens
             //Console.WriteLine("X length: " + barChartX.Count);
             //Console.WriteLine("Y length: " + barChartY.Count);
             UpdateBarChart(1, barChartY1onEachRow, "1 Queen on each row", highResBarChart);
-            BruteForceUpdateTexts();
+            BruteForceUpdateTexts("1 Queen for each row");
             InitializePictureBoxes();
         }
 
@@ -728,7 +728,7 @@ namespace EightQueens
             //Console.WriteLine("X length: " + barChartX.Count);
             //Console.WriteLine("Y length: " + barChartY.Count);
             UpdateBarChart(2, barChartYPermutations, "Permutations", highResBarChart);
-            BruteForceUpdateTexts();
+            BruteForceUpdateTexts("Permutations");
             InitializePictureBoxes();
         }
         #endregion
