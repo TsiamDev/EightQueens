@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.bruteForceButton = new System.Windows.Forms.Button();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.methodLabel = new System.Windows.Forms.Label();
@@ -44,6 +44,7 @@
             this.exeTestButton = new System.Windows.Forms.Button();
             this.inputSeedTextBox = new System.Windows.Forms.TextBox();
             this.inputSeedLabel = new System.Windows.Forms.Label();
+            this.ExecuteTest2Button = new System.Windows.Forms.Button();
             this.flowLayoutPanel2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -141,16 +142,16 @@
             // 
             // barChart
             // 
-            chartArea3.Name = "ChartArea1";
-            this.barChart.ChartAreas.Add(chartArea3);
-            legend3.Name = "Legend1";
-            this.barChart.Legends.Add(legend3);
+            chartArea1.Name = "ChartArea1";
+            this.barChart.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.barChart.Legends.Add(legend1);
             this.barChart.Location = new System.Drawing.Point(18, 45);
             this.barChart.Name = "barChart";
-            series3.ChartArea = "ChartArea1";
-            series3.Legend = "Legend1";
-            series3.Name = "Series1";
-            this.barChart.Series.Add(series3);
+            series1.ChartArea = "ChartArea1";
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            this.barChart.Series.Add(series1);
             this.barChart.Size = new System.Drawing.Size(525, 300);
             this.barChart.TabIndex = 0;
             this.barChart.Text = "chart1";
@@ -181,11 +182,22 @@
             this.inputSeedLabel.TabIndex = 70;
             this.inputSeedLabel.Text = "Input seed (integer - for indiv. tests)";
             // 
+            // ExecuteTest2Button
+            // 
+            this.ExecuteTest2Button.Location = new System.Drawing.Point(13, 12);
+            this.ExecuteTest2Button.Name = "ExecuteTest2Button";
+            this.ExecuteTest2Button.Size = new System.Drawing.Size(87, 23);
+            this.ExecuteTest2Button.TabIndex = 71;
+            this.ExecuteTest2Button.Text = "Execute Test2";
+            this.ExecuteTest2Button.UseVisualStyleBackColor = true;
+            this.ExecuteTest2Button.Click += new System.EventHandler(this.ExecuteTest2Button_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 584);
+            this.Controls.Add(this.ExecuteTest2Button);
             this.Controls.Add(this.exeTestButton);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.flowLayoutPanel2);
@@ -220,6 +232,7 @@
         private System.Windows.Forms.Button exeTestButton;
         private System.Windows.Forms.Label inputSeedLabel;
         private System.Windows.Forms.TextBox inputSeedTextBox;
+        private System.Windows.Forms.Button ExecuteTest2Button;
     }
 }
 

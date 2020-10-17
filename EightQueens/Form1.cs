@@ -33,6 +33,9 @@ namespace EightQueens
         //Labels
         private string exeTimeText;
 
+        //Chart variables
+        private List<int> barChartX = new List<int>();
+        private List<long> barChartY = new List<long>();
         #endregion
 
         #region Initialization
@@ -74,8 +77,52 @@ namespace EightQueens
 
         #endregion
 
+        #region Brute Force solution - 1 Queen on each row
+        //This method places the Queens one by one on each row
+        //Begins at first row - picks a random column - places Queen
+        //Second row - picks random column - places Queen
+        //etc
+        //Search Space: 8*8*...*8 = 8^8 = 16,777,216 possible placements
+        private void FindSolutionBruteForce1onEachRow(int inputSeed)
+        {
+            Random rnd = new Random(inputSeed);
+            bool terminationFlag;
+            do
+            {
+                InitializeParameters();
+
+                for (int xPos = 0; xPos < this.queenNum; xPos++)
+                {
+                    int yPos = rnd.Next(0, 8);  //Get a random column
+                    //Update the board and dictionary
+                    this.board[xPos, yPos] = 1;
+                    this.queenPos[0, queenIndex] = xPos;
+                    this.queenPos[1, queenIndex] = yPos;
+                    this.queenIndex++;
+                }
+
+                var watch = System.Diagnostics.Stopwatch.StartNew();
+                terminationFlag = CheckSolution();
+                watch.Stop();
+                checkSolutionMs += watch.ElapsedMilliseconds;
+
+            } while (terminationFlag == true);
+            Console.WriteLine("Found Solution!");
+
+            PrintSolution();
+            Console.WriteLine("CheckSolution total time: " + checkSolutionMs);
+            exeTimeText += "CheckSolution total time: " + checkSolutionMs + " ms" + "\n";
+        }
+        #endregion
+
         #region Brute Force solution
         //TODO: the function as is doesn't avoid checking same solutions
+
+        //This method places the Queens one by one on one of the open places on the board
+        //Begins for first Queen - picks random xPos, yPos - places Queen
+        //Second Queen - picks a random xPos, yPos excluding the previous - places Queen
+        //etc
+        //Search Space: 64*63*...*57 = 64!/56! = 281,474,976,710,656 possible placements
         private void FindSolutionBruteForce(int inputSeed)
         {
             Console.WriteLine("seed used for this iteration: " + inputSeed);
@@ -356,6 +403,11 @@ namespace EightQueens
             TestBench();
         }
 
+        private void ExecuteTest2Button_Click(object sender, EventArgs e)
+        {
+            TestBench1onEachRow();
+        }
+
         //Returns user seed or 1 if not defined
         private int ReadSeed()
         {
@@ -393,6 +445,24 @@ namespace EightQueens
 
             InitializePictureBoxes();
         }
+
+        private void BruteForce1onEachRowWrapper(int inputSeed)
+        {
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            FindSolutionBruteForce1onEachRow(inputSeed);
+            watch.Stop();
+            var elapsed = watch.ElapsedMilliseconds;
+
+            Console.WriteLine("FindSolutionBruteForce1onEachRow total time: " + elapsed + " ms");
+            Console.WriteLine("New solution generation total time: " + (elapsed - checkSolutionMs) + " ms");
+            exeTimeText += "FindSolutionBruteForce1onEachRow total time: " + elapsed + " ms" + "\n";
+            exeTimeText += "New solution generation total time: " + (elapsed - checkSolutionMs) + " ms";
+            this.barChartY.Add(elapsed);
+
+            BruteForceUpdateTexts();
+
+            InitializePictureBoxes();
+        }
         #endregion
 
         #region Miscelaneous
@@ -401,9 +471,6 @@ namespace EightQueens
             methodLabel.Text = "Method Used: Brute Force";
             exeTimeLabel.Text = exeTimeText;
         }
-
-        List<int> barChartX = new List<int>();
-        List<long> barChartY = new List<long>();
 
         private void UpdateBarChart()
         {
@@ -468,6 +535,24 @@ namespace EightQueens
                 Console.WriteLine(i + "/" + maxIter + " iteration");
 
                 BruteForceWrapper(seed);
+
+                this.barChartX.Add(seed);
+                this.seed++;
+            }
+            //Console.WriteLine("X length: " + barChartX.Count);
+            //Console.WriteLine("Y length: " + barChartY.Count);
+            UpdateBarChart();
+        }
+
+        private void TestBench1onEachRow()
+        {
+            int maxIter = 15;
+            for (int i = 0; i < maxIter; i++)
+            {
+                Console.WriteLine(i + "/" + maxIter + " iteration");
+
+                BruteForce1onEachRowWrapper(seed);
+                //FindSolutionBruteForce1onEachRow(seed);
 
                 this.barChartX.Add(seed);
                 this.seed++;
