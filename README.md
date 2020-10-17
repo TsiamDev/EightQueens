@@ -1,6 +1,6 @@
 # EightQueens
 
-This project solves the 8-queens puzzle with a brute force approach and visualizes the data
+This project solves the 8-queens puzzle with 3 different approaches and visualizes the data
 
 There exist the following modes: 
   * Brute Force: blind - Search Space: 64!/56!
