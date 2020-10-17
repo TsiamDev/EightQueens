@@ -35,7 +35,16 @@ namespace EightQueens
 
         //Chart variables
         private List<int> barChartX = new List<int>();
-        private List<long> barChartY = new List<long>();
+        //Brute force
+        private List<long> barChartYBruteForce = new List<long>();
+        //Brute force - 1 Queen on each row
+        private List<long> barChartY1onEachRow = new List<long>();
+        //Permutations
+        private List<long> barChartYPermutations = new List<long>();
+
+        //Permutations array
+        int[,] permutationsArray;
+        int permutationsArrayRowIndex;
         #endregion
 
         #region Initialization
@@ -46,10 +55,17 @@ namespace EightQueens
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
             InitializeParameters();
-            checkSolutionMs = 0;
             pictureBoxes = new PictureBox[8, 8];
             //set the Random seed
             this.seed = 1;
+            this.permutationsArray = new int[Factorial(8), 8];
+            this.permutationsArrayRowIndex = 0;
+            //3 Series total
+            this.barChart.Series.Add(new Series());
+            this.barChart.Series.Add(new Series());
+            //3 series total
+            this.highResBarChart.Series.Add(new Series());
+            this.highResBarChart.Series.Add(new Series());
 
             watch.Stop();
             var elapsed = watch.ElapsedMilliseconds;
@@ -68,13 +84,45 @@ namespace EightQueens
             //initialize queen position dictionary
             this.queenPos = new int[2, queenNum];
 
-            //reset index
+            //reset indices
             this.queenIndex = 0;
+            this.permutationsArrayRowIndex = 0;
 
             //clear strings
             this.exeTimeText = "";
         }
 
+        #endregion
+
+        #region Permutations solution
+        private void FindSolutionPermutations(int inputSeed)
+        {
+            //index of next permutation
+            for (int i = 0; i < this.permutationsArray.GetLength(0); i++)
+            {
+                //row index of board
+                int k = 0;
+                InitializeParameters();
+                //Place Queens for this iteration
+                //index of each Queen's yPos
+                for (int j = 0; j < this.permutationsArray.GetLength(1); j++)
+                {
+                    //Store Queen position in board
+                    this.board[k, this.permutationsArray[i, j]] = 1;
+                    //Store each Queen's position in queenPos
+                    this.queenPos[0, this.queenIndex] = k;
+                    this.queenPos[1, this.queenIndex] = this.permutationsArray[i, j];
+                    //Next Queen
+                    this.queenIndex++;
+                    k++;
+                }
+                //Check solution
+                if(CheckSolution() == false)
+                {
+                    return;
+                }
+            }
+        }
         #endregion
 
         #region Brute Force solution - 1 Queen on each row
@@ -85,6 +133,7 @@ namespace EightQueens
         //Search Space: 8*8*...*8 = 8^8 = 16,777,216 possible placements
         private void FindSolutionBruteForce1onEachRow(int inputSeed)
         {
+
             Random rnd = new Random(inputSeed);
             bool terminationFlag;
             do
@@ -396,19 +445,134 @@ namespace EightQueens
             int inputSeed = ReadSeed();
             Console.WriteLine("Input seed " + inputSeed);
             BruteForceWrapper(inputSeed);
+            BruteForceUpdateTexts();
+            InitializePictureBoxes();
         }
 
         private void exeTestButton_Click(object sender, EventArgs e)
         {
-            TestBench();
+            ResetTimers();
+            TestBench(barChart);
         }
 
         private void ExecuteTest2Button_Click(object sender, EventArgs e)
         {
-            TestBench1onEachRow();
+            ResetTimers();
+            TestBench1onEachRow(barChart);
         }
 
-        //Returns user seed or 1 if not defined
+        private void executeTest3Button_Click(object sender, EventArgs e)
+        {
+            ResetTimers();
+            GeneratePermutationsWrapper();
+            TestBenchPermutations(barChart);
+        }
+
+        private void oneQForEachRowButton_Click(object sender, EventArgs e)
+        {
+            ResetTimers();
+            int inputSeed = ReadSeed();
+            Console.WriteLine("Input seed " + inputSeed);
+            BruteForce1onEachRowWrapper(inputSeed);
+            BruteForceUpdateTexts();
+            InitializePictureBoxes();
+        }
+
+        private void permutationsButton_Click(object sender, EventArgs e)
+        {
+            ResetTimers();
+            int inputSeed = ReadSeed();
+            Console.WriteLine("Input seed " + inputSeed);
+            GeneratePermutationsWrapper();
+            PermutationsSolutionWrapper(inputSeed);
+            BruteForceUpdateTexts();
+            InitializePictureBoxes();
+        }
+
+        private void execAllTestsButton_Click(object sender, EventArgs e)
+        {
+            ResetTimers();
+            TestBenchPermutations(highResBarChart);
+            ResetTimers();
+            TestBench1onEachRow(highResBarChart);
+            ResetTimers();
+            TestBench(barChart);
+        }
+        #endregion
+
+        #region Wrappers
+        //Generate all permutations of N numbers
+        private void GeneratePermutationsWrapper()
+        {
+            int[] a = { 0, 1, 2, 3, 4, 5, 6, 7 };
+            //int[] a = { 1, 2, 3 }; // for testing
+            heapPermutation(a, a.Length, a.Length);
+
+            //Console.WriteLine("(0): " + permutationsArray.GetLength(0) + " (1): " + permutationsArray.GetLength(1));
+        }
+
+        private void BruteForceWrapper(int inputSeed)
+        {
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            FindSolutionBruteForce(inputSeed);
+            watch.Stop();
+            var elapsed = watch.ElapsedMilliseconds;
+
+            Console.WriteLine("FindSolutionBruteForce total time: " + elapsed + " ms");
+            Console.WriteLine("New solution generation total time: " + (elapsed - checkSolutionMs) + " ms");
+            exeTimeText += "FindSolutionBruteForce total time: " + elapsed + " ms" + "\n";
+            exeTimeText += "New solution generation total time: " + (elapsed - checkSolutionMs) + " ms";
+            this.barChartYBruteForce.Add(elapsed);
+
+            //BruteForceUpdateTexts();
+
+            //InitializePictureBoxes();
+        }
+
+        private void BruteForce1onEachRowWrapper(int inputSeed)
+        {
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            FindSolutionBruteForce1onEachRow(inputSeed);
+            watch.Stop();
+            var elapsed = watch.ElapsedMilliseconds;
+
+            Console.WriteLine("FindSolutionBruteForce1onEachRow total time: " + elapsed + " ms");
+            Console.WriteLine("New solution generation total time: " + (elapsed - checkSolutionMs) + " ms");
+            exeTimeText += "FindSolutionBruteForce1onEachRow total time: " + elapsed + " ms" + "\n";
+            exeTimeText += "New solution generation total time: " + (elapsed - checkSolutionMs) + " ms";
+            this.barChartY1onEachRow.Add(elapsed);
+
+            //BruteForceUpdateTexts();
+
+            //InitializePictureBoxes();
+        }
+
+        private void PermutationsSolutionWrapper(int inputSeed)
+        {
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            FindSolutionPermutations(inputSeed);
+            watch.Stop();
+            var elapsed = watch.ElapsedMilliseconds;
+
+            Console.WriteLine("FindSolutionPermutations total time: " + elapsed + " ms");
+            Console.WriteLine("New solution generation total time: " + (elapsed - checkSolutionMs) + " ms");
+            exeTimeText += "FindSolutionPermutations total time: " + elapsed + " ms" + "\n";
+            exeTimeText += "New solution generation total time: " + (elapsed - checkSolutionMs) + " ms";
+            this.barChartYPermutations.Add(elapsed);
+
+            //BruteForceUpdateTexts();
+
+            //InitializePictureBoxes();
+        }
+        #endregion
+
+        #region Miscelaneous
+        private void ResetTimers()
+        {
+            checkSolutionMs = 0;
+        }
+
+        //Returns user input seed or 1 if not defined
         private int ReadSeed()
         {
             int userSeed = 1;
@@ -425,59 +589,19 @@ namespace EightQueens
             }
             return userSeed;
         }
-        #endregion
 
-        #region Wrappers
-        private void BruteForceWrapper(int inputSeed)
-        {
-            var watch = System.Diagnostics.Stopwatch.StartNew();
-            FindSolutionBruteForce(inputSeed);
-            watch.Stop();
-            var elapsed = watch.ElapsedMilliseconds;
-
-            Console.WriteLine("FindSolutionBruteForce total time: " + elapsed + " ms");
-            Console.WriteLine("New solution generation total time: " + (elapsed - checkSolutionMs) + " ms");
-            exeTimeText += "FindSolutionBruteForce total time: " + elapsed + " ms" + "\n";
-            exeTimeText += "New solution generation total time: " + (elapsed - checkSolutionMs) + " ms";
-            this.barChartY.Add(elapsed);
-
-            BruteForceUpdateTexts();
-
-            InitializePictureBoxes();
-        }
-
-        private void BruteForce1onEachRowWrapper(int inputSeed)
-        {
-            var watch = System.Diagnostics.Stopwatch.StartNew();
-            FindSolutionBruteForce1onEachRow(inputSeed);
-            watch.Stop();
-            var elapsed = watch.ElapsedMilliseconds;
-
-            Console.WriteLine("FindSolutionBruteForce1onEachRow total time: " + elapsed + " ms");
-            Console.WriteLine("New solution generation total time: " + (elapsed - checkSolutionMs) + " ms");
-            exeTimeText += "FindSolutionBruteForce1onEachRow total time: " + elapsed + " ms" + "\n";
-            exeTimeText += "New solution generation total time: " + (elapsed - checkSolutionMs) + " ms";
-            this.barChartY.Add(elapsed);
-
-            BruteForceUpdateTexts();
-
-            InitializePictureBoxes();
-        }
-        #endregion
-
-        #region Miscelaneous
         private void BruteForceUpdateTexts()
         {
             methodLabel.Text = "Method Used: Brute Force";
             exeTimeLabel.Text = exeTimeText;
         }
 
-        private void UpdateBarChart()
+        private void UpdateBarChart(int seriesNum, List<long> barChartY, string legend, Chart barChart)
         {
-            barChart.Series[0].LegendText = "Brute Force Statistics";
-            barChart.Series[0].ChartType = SeriesChartType.Column;
-            barChart.Series[0].IsValueShownAsLabel = true;
-            barChart.Series[0].Points.DataBindXY(barChartX, barChartY);
+            barChart.Series[seriesNum].LegendText = legend;
+            barChart.Series[seriesNum].ChartType = SeriesChartType.Column;
+            barChart.Series[seriesNum].IsValueShownAsLabel = true;
+            barChart.Series[seriesNum].Points.DataBindXY(barChartX, barChartY);
         }
 
         private void ReinitializePanel()
@@ -524,11 +648,26 @@ namespace EightQueens
                 }
             }
         }
+
+        private int Factorial(int f)
+        {
+            int fact = 1;
+            for (int i = 1; i <= f; i++)
+            {
+                fact = fact * i;
+            }
+
+            return fact;
+        }
         #endregion
 
         #region Testbench
-        private void TestBench()
+        private void TestBench(Chart barChart)
         {
+            this.barChartX = new List<int>();
+            this.barChartYBruteForce = new List<long>();
+            this.seed = 1;
+
             int maxIter = 15;
             for (int i = 0; i < maxIter; i++)
             {
@@ -541,11 +680,17 @@ namespace EightQueens
             }
             //Console.WriteLine("X length: " + barChartX.Count);
             //Console.WriteLine("Y length: " + barChartY.Count);
-            UpdateBarChart();
+            UpdateBarChart(0, barChartYBruteForce, "Brute Force", barChart);
+            BruteForceUpdateTexts();
+            InitializePictureBoxes();
         }
 
-        private void TestBench1onEachRow()
+        private void TestBench1onEachRow(Chart barChart)
         {
+            this.barChartX = new List<int>();
+            this.barChartY1onEachRow = new List<long>();
+            this.seed = 1;
+
             int maxIter = 15;
             for (int i = 0; i < maxIter; i++)
             {
@@ -559,8 +704,84 @@ namespace EightQueens
             }
             //Console.WriteLine("X length: " + barChartX.Count);
             //Console.WriteLine("Y length: " + barChartY.Count);
-            UpdateBarChart();
+            UpdateBarChart(1, barChartY1onEachRow, "1 Queen on each row", highResBarChart);
+            BruteForceUpdateTexts();
+            InitializePictureBoxes();
         }
+
+        private void TestBenchPermutations(Chart barChart)
+        {
+            this.barChartX = new List<int>();
+            this.barChartYPermutations = new List<long>();
+            this.seed = 1;
+
+            int maxIter = 15;
+            for (int i = 0; i < maxIter; i++)
+            {
+                Console.WriteLine(i + "/" + maxIter + " iteration");
+
+                PermutationsSolutionWrapper(seed);
+
+                this.barChartX.Add(seed);
+                this.seed++;
+            }
+            //Console.WriteLine("X length: " + barChartX.Count);
+            //Console.WriteLine("Y length: " + barChartY.Count);
+            UpdateBarChart(2, barChartYPermutations, "Permutations", highResBarChart);
+            BruteForceUpdateTexts();
+            InitializePictureBoxes();
+        }
+        #endregion
+
+        #region Heaps' algorithm for generating all permutations of N numbers
+        //found here: https://www.geeksforgeeks.org/heaps-algorithm-for-generating-permutations/
+        private void printArr(int[] a, int n)
+        {
+            int i;
+            for (i = 0; i < n; i++)
+            {
+                //Console.Write(a[i] + " ");
+                permutationsArray[permutationsArrayRowIndex, i] = a[i];
+            }
+            //Console.WriteLine();
+            permutationsArrayRowIndex++;
+
+        }
+
+        private void heapPermutation(int[] a, int size, int n)
+        {
+            // if size becomes 1 then prints the obtained
+            // permutation
+            if (size == 1)
+            {
+                printArr(a, n);
+            }
+
+            for (int i = 0; i < size; i++)
+            {
+                heapPermutation(a, size - 1, n);
+
+                // if size is odd, swap 0th i.e (first) and
+                // (size-1)th i.e (last) element
+                if (size % 2 == 1)
+                {
+                    int temp = a[0];
+                    a[0] = a[size - 1];
+                    a[size - 1] = temp;
+                }
+
+                // If size is even, swap ith and
+                // (size-1)th i.e (last) element
+                else
+                {
+                    int temp = a[i];
+                    a[i] = a[size - 1];
+                    a[size - 1] = temp;
+                }
+            }
+        }
+
+
         #endregion
     }
 }
