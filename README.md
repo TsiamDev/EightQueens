@@ -34,7 +34,7 @@ the time elapsed isn't actually 0ms, it is simply beyond the resolution of the t
 
 # Notes on the permutations approach
 
-* Heap's algorithm was used for generating the Tree that contains all possible permutations of N numbers in its' leaves, and can be found here:
+* Heap's algorithm was used for generating recursively all the permutations of N numbers, and can be found here:
 https://www.geeksforgeeks.org/heaps-algorithm-for-generating-permutations/
 
 # TODO suggestions
