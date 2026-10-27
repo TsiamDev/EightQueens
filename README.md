@@ -1,43 +1,88 @@
 # EightQueens
 
-This project solves the 8-queens puzzle with 3 different approaches and visualizes the data
+An interactive teaching project that solves the classic **8-queens puzzle** with three different approaches and visualizes the results, so you can *see* how algorithm choice changes the size of the search space and the running time.
 
-There exist the following modes: 
-  * Brute Force: blind - Search Space: 64!/56!
-    * Execute the brute force method once, for a specific seed
-    * Execute the predefined testbench for the brute force method (Note: the total measured execution times are ~20-30 mins)
-  * Brute Force: 1 Queen for each row - Search Space: 8^8
-    * Execute the brute force method optimization for a specific seed
-    * Execute the predefined testbench for the brute force method
-  * Permutations: - Search Space: 8!
-    * Execute the permutations method for a specific seed
-    * Execute the predefined testbench for the permutations method
-  * Testing mode
-    *Execute all testbenches sequentially
+## Learning objectives
 
-This is a sample run of the testing mode (for seed = [1:15] & 15 iterations for each method)
+After working through this project you should be able to:
 
-The seed used was predefined in order to produce, reproducible results.
+* State the 8-queens problem and the constraints that a valid solution must satisfy.
+* Explain how restricting the search space (blind placement → one queen per row → permutations) reduces the work by many orders of magnitude.
+* Compute the size of each search space.
+* Read and interpret empirical timing results, and recognise the limits of the measurement (timer resolution).
+* Describe Heap's algorithm for generating permutations.
 
-![alt text](https://github.com/TsiamDev/EightQueens/blob/master/EightQueens/Resources/sampleTestsExecution.png?raw=true)
+## Background: the problem
 
-This is the representation of solution found for <1 Queen for each row> method with a seed = 10
+Place 8 queens on an 8×8 chessboard so that no two queens attack each other. A queen attacks along its row, its column, and both diagonals. A placement is therefore valid only if **no two queens share a row, a column, or a diagonal**.
 
-![alt text](https://github.com/TsiamDev/EightQueens/blob/master/EightQueens/Resources/sampleSingleTest.png?raw=true)
+The code checks these constraints in `CheckHorizontal`, `CheckVertical` and `CheckDiagonal` (`Form1.cs`), and validates a whole board with `CheckSolution`.
 
-# Notes on measured times
+## The three approaches
 
-* The permutations approach needs an initialization period of a few milliseconds to generate all the possible permutations of the numbers [0:7], 
-but after that the execution times are negligible in the order of 5-10 ms
-* Wherever the measured time displayed on the left of the tab control (labels on the left side that are visible at all times) is 0ms, 
-the time elapsed isn't actually 0ms, it is simply beyond the resolution of the timer (which is in the order of 5-10 ms)
+Each approach prunes the search space further than the last.
 
-# Notes on the permutations approach
+| # | Approach | Idea | Search space | Method in `Form1.cs` |
+|---|----------|------|--------------|----------------------|
+| 1 | **Brute force: blind** | Drop 8 queens on any of the 64 squares | 64!/56! (≈ 1.8 × 10¹⁴) | `FindSolutionBruteForce` |
+| 2 | **Brute force: 1 queen per row** | A row can hold only one queen, so choose a column for each row | 8⁸ = 16,777,216 | `FindSolutionBruteForce1onEachRow` |
+| 3 | **Permutations** | Each row *and* column holds exactly one queen, so a solution is a permutation of the columns 0–7 | 8! = 40,320 | `FindSolutionPermutations` |
 
-* Heap's algorithm was used for generating recursively all the permutations of N numbers, and can be found here:
-https://www.geeksforgeeks.org/heaps-algorithm-for-generating-permutations/
+**Key insight:** every added piece of problem knowledge (a row holds at most one queen; a column holds at most one queen) removes whole classes of invalid boards before we ever test them.
 
-# TODO suggestions
+### Discussion questions
 
-* Another optimization on the permutations approach: DFS with backtracking. 
-* Find a way (library?) to measure the elapsed time with greater precision (in the order of ns?)
+1. Why is the blind search space 64!/56! and not 64⁸?
+2. Why does the permutation approach still need to check diagonals?
+3. By what factor does each step shrink the search space?
+
+## Running the application
+
+This is a Windows Forms app (.NET Framework 4.6.1). Open `EightQueens.sln` in Visual Studio and run it.
+
+The UI offers the following modes:
+
+* **Brute Force: blind**
+  * Run once for a specific seed.
+  * Run the predefined testbench. *Note: the total measured execution time is ~20–30 minutes.*
+* **Brute Force: 1 queen for each row**
+  * Run the optimized method for a specific seed.
+  * Run the predefined testbench.
+* **Permutations**
+  * Run the permutations method for a specific seed.
+  * Run the predefined testbench.
+* **Testing mode**
+  * Run all testbenches sequentially.
+
+The seed controls the random choices the search makes. Seeds are predefined for the testbenches so results are **reproducible**.
+
+## Sample output
+
+**Testing mode** (seeds 1–15, 15 iterations per method):
+
+![Sample testing-mode execution](https://github.com/TsiamDev/EightQueens/blob/master/EightQueens/Resources/sampleTestsExecution.png?raw=true)
+
+**A single solution** found by the *1 queen for each row* method with seed = 10:
+
+![Sample single solution](https://github.com/TsiamDev/EightQueens/blob/master/EightQueens/Resources/sampleSingleTest.png?raw=true)
+
+## Reading the timing results
+
+* The permutations approach has a start-up cost of a few milliseconds to generate all permutations of [0:7]. After that, execution times are negligible, around 5–10 ms.
+* Where the time label on the left of the tab control (always visible) shows **0 ms**, the true time is not zero. It is simply below the timer's resolution (about 5–10 ms).
+
+## Going deeper: Heap's algorithm
+
+The permutations approach generates all permutations of N numbers recursively using **Heap's algorithm** (`heapPermutation` in `Form1.cs`). Reference: [GeeksforGeeks: Heap's algorithm for generating permutations](https://www.geeksforgeeks.org/heaps-algorithm-for-generating-permutations/).
+
+## Exercises
+
+1. Run each single-seed mode and compare the displayed times.
+2. Run the testbenches and explain the differences in the bar charts using the search-space sizes above.
+3. Change the seed and observe how the blind and one-per-row methods vary, while permutations stays nearly constant.
+4. Modify the code to count how many boards each method checks before finding a solution.
+
+## Extension ideas
+
+* Add a **DFS with backtracking** approach, which prunes a partial board as soon as it contains a conflict. This should beat the permutations approach.
+* Measure elapsed time with higher precision (nanosecond scale), for example with `System.Diagnostics.Stopwatch`.
