@@ -25,56 +25,55 @@ This is the representation of solution found for <1 Queen for each row> method w
 
 ![alt text](https://github.com/TsiamDev/EightQueens/blob/master/EightQueens/Resources/sampleSingleTest.png?raw=true)
 
-# Building and running with MSBuild
+# Building, running and testing
 
-The project is a Windows Forms application targeting .NET Framework 4.6.2.
+The project is a Windows Forms application targeting .NET Framework 4.6.2, in SDK-style projects.
 
 ## Requirements
 
 * Windows
-* Visual Studio 2017 or later (any edition) or the Visual Studio Build Tools, with the ".NET desktop development" workload
-* The .NET Framework 4.6.2 targeting pack (included in the workload above, or installed separately as the .NET Framework 4.6.2 Developer Pack)
-
-Note: the `dotnet build` CLI is not supported for this project, because it is an old-style .NET Framework project with image resources.
-Use MSBuild from Visual Studio instead.
+* The .NET SDK (the `dotnet` command), which restores the NuGet packages on the first build
+* The .NET Framework 4.6.2 targeting pack (included in Visual Studio's ".NET desktop development" workload, or installed separately as the .NET Framework 4.6.2 Developer Pack)
 
 ## Build
 
-These commands assume `msbuild` is on your PATH (it is in a "Developer PowerShell for VS" or "Developer Command Prompt for VS").
 From the repository root, run:
 
 ```powershell
-msbuild EightQueens.sln /p:Configuration=Debug
+dotnet build EightQueens.sln
 ```
 
 Useful variations:
 
 ```powershell
-msbuild EightQueens.sln /p:Configuration=Release
+dotnet build EightQueens.sln -c Release
 ```
 
 ```powershell
-msbuild EightQueens.sln /t:Rebuild /p:Configuration=Debug
+dotnet build EightQueens.sln --no-incremental
+```
+
+To build with MSBuild instead (for example from a "Developer PowerShell for VS"), the Visual Studio installation also needs the ".NET SDK" component, because the projects are SDK-style:
+
+```powershell
+msbuild EightQueens.sln /restore /p:Configuration=Debug
 ```
 
 ## Run
 
-The executable is written to `EightQueens\bin\Debug\EightQueens.exe` (or `bin\Release` for a Release build):
+The executable is written to `EightQueens\bin\Debug\net462\EightQueens.exe` (or `bin\Release` for a Release build):
 
 ```powershell
-.\EightQueens\bin\Debug\EightQueens.exe
+.\EightQueens\bin\Debug\net462\EightQueens.exe
 ```
 
-# Running the tests
+## Test
 
-The unit tests (MSTest) live in the `EightQueens.Tests` project and check the Queen conflict detection, including that exactly 92 of the 8! = 40,320 permutations are valid solutions.
-They need the .NET SDK (`dotnet`) and restore their NuGet packages on the first run. Run them from the repository root:
+The unit tests (MSTest) live in the `EightQueens.Tests` project and check the Queen conflict detection, including that exactly 92 of the 8! = 40,320 permutations are valid solutions. Run them from the repository root:
 
 ```powershell
-dotnet test EightQueens.Tests\EightQueens.Tests.csproj
+dotnet test EightQueens.sln
 ```
-
-The test project is deliberately not part of `EightQueens.sln`, so building the solution with MSBuild is unaffected.
 
 # Notes on measured times
 
