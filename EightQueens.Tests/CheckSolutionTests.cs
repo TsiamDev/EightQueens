@@ -23,7 +23,7 @@ namespace EightQueens.Tests
         }
 
         //One Queen per row: columns[row] is the column of that row's Queen
-        private static bool HasConflictOneQueenPerRow(int[] columns)
+        internal static bool HasConflictOneQueenPerRow(int[] columns)
         {
             int[][] queens = new int[columns.Length][];
             for (int row = 0; row < columns.Length; row++)
@@ -87,7 +87,7 @@ namespace EightQueens.Tests
             Assert.AreEqual(92, solutions);
         }
 
-        private static IEnumerable<int[]> Permutations(int n)
+        internal static IEnumerable<int[]> Permutations(int n)
         {
             return Permute(new int[n], new bool[n], 0);
         }
