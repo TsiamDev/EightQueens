@@ -65,6 +65,17 @@ The executable is written to `EightQueens\bin\Debug\EightQueens.exe` (or `bin\Re
 .\EightQueens\bin\Debug\EightQueens.exe
 ```
 
+# Running the tests
+
+The unit tests (MSTest) live in the `EightQueens.Tests` project and check the Queen conflict detection, including that exactly 92 of the 8! = 40,320 permutations are valid solutions.
+They need the .NET SDK (`dotnet`) and restore their NuGet packages on the first run. Run them from the repository root:
+
+```powershell
+dotnet test EightQueens.Tests\EightQueens.Tests.csproj
+```
+
+The test project is deliberately not part of `EightQueens.sln`, so building the solution with MSBuild is unaffected.
+
 # Notes on measured times
 
 * The permutations approach needs an initialization period of a few milliseconds to generate all the possible permutations of the numbers [0:7], 
