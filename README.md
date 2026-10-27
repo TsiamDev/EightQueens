@@ -75,6 +75,20 @@ The unit tests (xUnit.net) live in the `EightQueens.Tests` project and check the
 dotnet test EightQueens.sln
 ```
 
+## Code coverage
+
+Run the tests with the coverage collector, then turn the resulting Cobertura XML into an HTML report with [ReportGenerator](https://github.com/danielpalme/ReportGenerator) (installed once with `dotnet tool install -g dotnet-reportgenerator-globaltool`):
+
+```powershell
+dotnet test --collect:"XPlat Code Coverage" --settings coverage.runsettings
+```
+
+```powershell
+reportgenerator -reports:"EightQueens.Tests\TestResults\*\coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
+```
+
+Open `coveragereport\index.html` to browse the report.
+
 # Notes on measured times
 
 * The permutations approach needs an initialization period of a few milliseconds to generate all the possible permutations of the numbers [0:7], 
