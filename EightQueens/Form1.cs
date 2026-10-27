@@ -42,9 +42,6 @@ namespace EightQueens
         //Permutations
         private List<long> barChartYPermutations = new List<long>();
 
-        //Checks the Queens' placement for conflicts
-        private CheckSolution checkSolution;
-
         //Permutations array
         int[,] permutationsArray;
         int permutationsArrayRowIndex;
@@ -58,7 +55,6 @@ namespace EightQueens
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
             InitializeParameters();
-            this.checkSolution = new CheckSolution();
             pictureBoxes = new PictureBox[8, 8];
             //set the Random seed
             this.seed = 1;
@@ -121,7 +117,7 @@ namespace EightQueens
                     k++;
                 }
                 //Check solution
-                if(CheckSolution() == false)
+                if(HasConflict() == false)
                 {
                     return;
                 }
@@ -155,7 +151,7 @@ namespace EightQueens
                 }
 
                 var watch = System.Diagnostics.Stopwatch.StartNew();
-                terminationFlag = CheckSolution();
+                terminationFlag = HasConflict();
                 watch.Stop();
                 checkSolutionMs += watch.ElapsedMilliseconds;
 
@@ -216,7 +212,7 @@ namespace EightQueens
                     } while (flag == false);
                 }
                 var watch = System.Diagnostics.Stopwatch.StartNew();
-                terminationFlag = CheckSolution();
+                terminationFlag = HasConflict();
                 watch.Stop();
                 checkSolutionMs += watch.ElapsedMilliseconds;
                 
@@ -256,9 +252,9 @@ namespace EightQueens
 
         #region  Check if current solution is acceptable
         //Returns true if there is a conflict between the Queens currently on the board
-        private bool CheckSolution()
+        private bool HasConflict()
         {
-            return this.checkSolution.HasConflict(this.board, this.queenPos);
+            return CheckSolution.HasConflict(this.board, this.queenPos);
         }
         #endregion
 

@@ -1,14 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using static EightQueens.Tests.BoardHelpers;
 
 namespace EightQueens.Tests
 {
     [TestClass]
     public class KnownSolutionsTests
     {
-        private const int Size = 8;
-
         //All 92 solutions of the eight queens puzzle. Each string lists, row by row, the column
         //(0-7) of that row's Queen, so "04752613" is the first solution in lexicographic order.
         //Source: the 11l solution output on Rosetta Code, "N-queens problem"
@@ -111,19 +110,22 @@ namespace EightQueens.Tests
             "72051463",
             "73025164"        };
 
+        // Converts string to int[] by subtracting the value of the char '0'.
         private static int[] Parse(string solution)
         {
             return solution.Select(c => c - '0').ToArray();
         }
 
         [TestMethod]
-        public void KnownSolutions_AreTheExpected92DistinctBoards()
+        public void KnownSolutions_AreTheExpected92Solutions_DistinctBoards()
         {
             Assert.AreEqual(92, KnownSolutions.Length);
             Assert.AreEqual(92, KnownSolutions.Distinct().Count());
             foreach (string solution in KnownSolutions)
             {
+                // Checks if solution has Length=8
                 Assert.AreEqual(Size, solution.Length, solution);
+                // Checks if solution has all [0-7] integers exactly once, in any order
                 CollectionAssert.AreEquivalent(Enumerable.Range(0, Size).ToArray(), Parse(solution), solution);
             }
         }
@@ -133,7 +135,7 @@ namespace EightQueens.Tests
         {
             foreach (string solution in KnownSolutions)
             {
-                Assert.IsFalse(CheckSolutionTests.HasConflictOneQueenPerRow(Parse(solution)),
+                Assert.IsFalse(HasConflictOneQueenPerRow(Parse(solution)),
                     "Known solution reported as a conflict: " + solution);
             }
         }
@@ -143,8 +145,8 @@ namespace EightQueens.Tests
         {
             //Nothing is missing from the list and nothing extra is accepted by CheckSolution
             HashSet<string> found = new HashSet<string>(
-                CheckSolutionTests.Permutations(Size)
-                    .Where(p => !CheckSolutionTests.HasConflictOneQueenPerRow(p))
+                Permutations(Size)
+                    .Where(p => !HasConflictOneQueenPerRow(p))
                     .Select(p => string.Concat(p)));
 
             Assert.IsTrue(found.SetEquals(KnownSolutions));
