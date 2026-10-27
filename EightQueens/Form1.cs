@@ -42,6 +42,9 @@ namespace EightQueens
         //Permutations
         private List<long> barChartYPermutations = new List<long>();
 
+        //Checks the Queens' placement for conflicts
+        private CheckSolution checkSolution;
+
         //Permutations array
         int[,] permutationsArray;
         int permutationsArrayRowIndex;
@@ -55,6 +58,7 @@ namespace EightQueens
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
             InitializeParameters();
+            this.checkSolution = new CheckSolution();
             pictureBoxes = new PictureBox[8, 8];
             //set the Random seed
             this.seed = 1;
@@ -251,191 +255,10 @@ namespace EightQueens
         #endregion
 
         #region  Check if current solution is acceptable
+        //Returns true if there is a conflict between the Queens currently on the board
         private bool CheckSolution()
         {
-            bool returnFlag = false;
-
-            //Check all queen positions for conflicts
-            for (int j = 0; j < this.queenPos.GetLength(1); j++)
-            {
-                if (CheckHorizontal(queenPos[0, j], queenPos[1, j]) == true)
-                {
-                    returnFlag = true;
-                    break;
-                }
-                if (CheckVertical(queenPos[0, j], queenPos[1, j]) == true)
-                {
-                    returnFlag = true;
-                    break;
-                }
-                if (CheckDiagonal(queenPos[0, j], queenPos[1, j]) == true)
-                {
-                    returnFlag = true;
-                    break;
-                }
-            }           
-
-            return returnFlag;
-        }
-
-        //Returns true if there is a horizontal collision
-        private bool CheckHorizontal(int x, int y)
-        {
-            bool returnFlag = false;
-
-            //For given x position check all columns except the current
-            for (int i = 0; i < this.board.GetLength(1); i++)
-            {
-                //Exclude the current column
-                if( i != y )
-                {
-                    if (this.board[x, i] == 1)
-                    {
-                        returnFlag = true;
-                        break;
-                    }
-                }
-
-            }
-
-            return returnFlag;
-        }
-
-        //Returns true if there is a vertical collision
-        private bool CheckVertical(int x, int y)
-        {
-            bool returnFlag = false;
-
-            //For given x position check all rows except the current
-            for (int i = 0; i < this.board.GetLength(0); i++)
-            {
-                //Exclude the current column
-                if (i != x)
-                {
-                    if (this.board[i, y] == 1)
-                    {
-                        returnFlag = true;
-                        break;
-                    }
-                }
-
-            }
-
-            return returnFlag;
-        }
-
-        //Returns true if there is a diagonal collision
-        private bool CheckDiagonal(int x, int y)
-        {
-            //if there is at least one collision return true
-            //NOTE: I could have checked it in a single statement 
-            //but I think this way the execution time is less in terms of O()
-            //because there is the possibility that not all functions will get called
-            //if a conflict is found earlier in every iteration
-            if(CheckUpperLeftDiagonal(x, y) == true)
-            {
-                return true;
-            }
-            if (CheckLowerRightDiagonal(x, y) == true)
-            {
-                return true;
-            }
-            if(CheckLowerLeftDiagonal(x, y) == true)
-            {
-                return true;
-            }
-            if(CheckUpperRightDiagonal(x, y) == true)
-            {
-                return true;
-            }
-
-            //If you got to this point then there are no conflicts so return false
-            return false;
-
-        }
-
-        private bool CheckUpperLeftDiagonal(int x, int y)
-        {
-            bool returnFlag = false;
-
-            for (int i = 1; i < this.board.GetLength(0); i++)
-            {
-                if( ((x-i) < 0) || ((y -i) < 0) )
-                {
-                    //Out of bounds
-                    break;
-                }
-                if(this.board[x - i, y - i] == 1)
-                {
-                    returnFlag = true;
-                    break;
-                }
-            }
-
-            return returnFlag;
-        }
-
-        private bool CheckLowerRightDiagonal(int x, int y)
-        {
-            bool returnFlag = false;
-
-            for (int i = 1; i < this.board.GetLength(0); i++)
-            {
-                if (((x + i) >= this.board.GetLength(0)) || ((y + i) >= this.board.GetLength(1)))
-                {
-                    //Out of bounds
-                    break;
-                }
-                if (this.board[x + i, y + i] == 1)
-                {
-                    returnFlag = true;
-                    break;
-                }
-            }
-
-            return returnFlag;
-        }
-
-        private bool CheckLowerLeftDiagonal(int x, int y)
-        {
-            bool returnFlag = false;
-
-            for (int i = 1; i < this.board.GetLength(0); i++)
-            {
-                if (((x + i) >= this.board.GetLength(0)) || ((y - i) < 0))
-                {
-                    //Out of bounds
-                    break;
-                }
-                if (this.board[x + i, y - i] == 1)
-                {
-                    returnFlag = true;
-                    break;
-                }
-            }
-
-            return returnFlag;
-        }
-
-        private bool CheckUpperRightDiagonal(int x, int y)
-        {
-            bool returnFlag = false;
-
-            for (int i = 1; i < this.board.GetLength(0); i++)
-            {
-                if ( ((x - i) < 0) || ((y + i) >= this.board.GetLength(1)) )
-                {
-                    //Out of bounds
-                    break;
-                }
-                if (this.board[x - i, y + i] == 1)
-                {
-                    returnFlag = true;
-                    break;
-                }
-            }
-
-            return returnFlag;
+            return this.checkSolution.HasConflict(this.board, this.queenPos);
         }
         #endregion
 

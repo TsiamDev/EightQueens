@@ -25,6 +25,46 @@ This is the representation of solution found for <1 Queen for each row> method w
 
 ![alt text](https://github.com/TsiamDev/EightQueens/blob/master/EightQueens/Resources/sampleSingleTest.png?raw=true)
 
+# Building and running with MSBuild
+
+The project is a Windows Forms application targeting .NET Framework 4.6.2.
+
+## Requirements
+
+* Windows
+* Visual Studio 2017 or later (any edition) or the Visual Studio Build Tools, with the ".NET desktop development" workload
+* The .NET Framework 4.6.2 targeting pack (included in the workload above, or installed separately as the .NET Framework 4.6.2 Developer Pack)
+
+Note: the `dotnet build` CLI is not supported for this project, because it is an old-style .NET Framework project with image resources.
+Use MSBuild from Visual Studio instead.
+
+## Build
+
+These commands assume `msbuild` is on your PATH (it is in a "Developer PowerShell for VS" or "Developer Command Prompt for VS").
+From the repository root, run:
+
+```powershell
+msbuild EightQueens.sln /p:Configuration=Debug
+```
+
+Useful variations:
+
+```powershell
+msbuild EightQueens.sln /p:Configuration=Release
+```
+
+```powershell
+msbuild EightQueens.sln /t:Rebuild /p:Configuration=Debug
+```
+
+## Run
+
+The executable is written to `EightQueens\bin\Debug\EightQueens.exe` (or `bin\Release` for a Release build):
+
+```powershell
+.\EightQueens\bin\Debug\EightQueens.exe
+```
+
 # Notes on measured times
 
 * The permutations approach needs an initialization period of a few milliseconds to generate all the possible permutations of the numbers [0:7], 
