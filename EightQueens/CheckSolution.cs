@@ -45,7 +45,7 @@ namespace EightQueens
             for (int i = 0; i < board.GetLength(1); i++)
             {
                 //Exclude the current column
-                if( i != y )
+                if (i != y)
                 {
                     if (board[x, i] == 1)
                     {
@@ -90,7 +90,7 @@ namespace EightQueens
             //but I think this way the execution time is less in terms of O()
             //because there is the possibility that not all functions will get called
             //if a conflict is found earlier in every iteration
-            if(CheckUpperLeftDiagonal(board, x, y) == true)
+            if (CheckUpperLeftDiagonal(board, x, y) == true)
             {
                 return true;
             }
@@ -98,11 +98,11 @@ namespace EightQueens
             {
                 return true;
             }
-            if(CheckLowerLeftDiagonal(board, x, y) == true)
+            if (CheckLowerLeftDiagonal(board, x, y) == true)
             {
                 return true;
             }
-            if(CheckUpperRightDiagonal(board, x, y) == true)
+            if (CheckUpperRightDiagonal(board, x, y) == true)
             {
                 return true;
             }
@@ -118,12 +118,12 @@ namespace EightQueens
 
             for (int i = 1; i < board.GetLength(0); i++)
             {
-                if( ((x-i) < 0) || ((y -i) < 0) )
+                if (((x - i) < 0) || ((y - i) < 0))
                 {
                     //Out of bounds
                     break;
                 }
-                if(board[x - i, y - i] == 1)
+                if (board[x - i, y - i] == 1)
                 {
                     returnFlag = true;
                     break;
@@ -181,7 +181,7 @@ namespace EightQueens
 
             for (int i = 1; i < board.GetLength(0); i++)
             {
-                if ( ((x - i) < 0) || ((y + i) >= board.GetLength(1)) )
+                if (((x - i) < 0) || ((y + i) >= board.GetLength(1)))
                 {
                     //Out of bounds
                     break;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -117,7 +117,7 @@ namespace EightQueens
                     k++;
                 }
                 //Check solution
-                if(HasConflict() == false)
+                if (HasConflict() == false)
                 {
                     return;
                 }
@@ -215,7 +215,7 @@ namespace EightQueens
                 terminationFlag = HasConflict();
                 watch.Stop();
                 checkSolutionMs += watch.ElapsedMilliseconds;
-                
+
             } while (terminationFlag == true);
             Console.WriteLine("Found Solution!");
 
@@ -235,7 +235,7 @@ namespace EightQueens
                 str = "";
                 for (int j = 0; j < this.board.GetLength(1); j++)
                 {
-                    if(this.board[i,j] == 1)
+                    if (this.board[i, j] == 1)
                     {
                         str += "X";
                     }

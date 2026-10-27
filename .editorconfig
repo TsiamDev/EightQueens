@@ -1,0 +1,39 @@
+root = true
+
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{csproj,props,targets,resx,yml,json}]
+indent_size = 2
+
+[*.cs]
+dotnet_sort_system_directives_first = true
+dotnet_style_qualification_for_field = false:suggestion
+dotnet_style_qualification_for_property = false:suggestion
+dotnet_style_qualification_for_method = false:suggestion
+csharp_style_var_for_built_in_types = false:suggestion
+csharp_style_var_when_type_is_apparent = true:suggestion
+csharp_prefer_braces = true:suggestion
+csharp_style_namespace_declarations = block_scoped:suggestion
+
+# Naming
+dotnet_naming_rule.private_fields_camel.symbols = private_fields
+dotnet_naming_rule.private_fields_camel.style = camel_case
+dotnet_naming_rule.private_fields_camel.severity = suggestion
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+dotnet_naming_style.camel_case.capitalization = camel_case
+
+# WinForms projects ship designer-generated code we don't maintain by hand
+[**/*.Designer.cs]
+generated_code = true
+dotnet_analyzer_diagnostic.severity = none
+
+# Test classes and methods follow xunit conventions, not CA1707/CA1822
+[EightQueens.Tests/**.cs]
+dotnet_diagnostic.CA1707.severity = none
+dotnet_diagnostic.CA1822.severity = none
