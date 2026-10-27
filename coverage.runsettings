@@ -6,7 +6,7 @@
         <Configuration>
           <Format>cobertura</Format>
           <!-- Measure the app, not the tests or the generated designer code -->
-          <!--<Exclude>[EightQueens.Tests]*,[xunit*]*</Exclude>-->
+          <Exclude>[EightQueens.Tests]*,[xunit*]*</Exclude>
           <ExcludeByFile>**/*.Designer.cs</ExcludeByFile>
         </Configuration>
       </DataCollector>
