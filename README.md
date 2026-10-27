@@ -69,7 +69,7 @@ The executable is written to `EightQueens\bin\Debug\net462\EightQueens.exe` (or 
 
 ## Test
 
-The unit tests (MSTest) live in the `EightQueens.Tests` project and check the Queen conflict detection, including that exactly 92 of the 8! = 40,320 permutations are valid solutions. Run them from the repository root:
+The unit tests (xUnit.net) live in the `EightQueens.Tests` project and check the Queen conflict detection, including that exactly 92 of the 8! = 40,320 permutations are valid solutions. Run them from the repository root:
 
 ```powershell
 dotnet test EightQueens.sln

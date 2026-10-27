@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using static EightQueens.Tests.BoardHelpers;
 
 namespace EightQueens.Tests
 {
-    [TestClass]
     public class KnownSolutionsTests
     {
         //All 92 solutions of the eight queens puzzle. Each string lists, row by row, the column
@@ -116,31 +115,31 @@ namespace EightQueens.Tests
             return solution.Select(c => c - '0').ToArray();
         }
 
-        [TestMethod]
+        [Fact]
         public void KnownSolutions_AreTheExpected92Solutions_DistinctBoards()
         {
-            Assert.AreEqual(92, KnownSolutions.Length);
-            Assert.AreEqual(92, KnownSolutions.Distinct().Count());
+            Assert.Equal(92, KnownSolutions.Length);
+            Assert.Equal(92, KnownSolutions.Distinct().Count());
             foreach (string solution in KnownSolutions)
             {
                 // Checks if solution has Length=8
-                Assert.AreEqual(Size, solution.Length, solution);
+                Assert.True(solution.Length == Size, "Wrong length: " + solution);
                 // Checks if solution has all [0-7] integers exactly once, in any order
-                CollectionAssert.AreEquivalent(Enumerable.Range(0, Size).ToArray(), Parse(solution), solution);
+                Assert.True(Enumerable.Range(0, Size).SequenceEqual(Parse(solution).OrderBy(column => column)), "Not a permutation of 0-7: " + solution);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void EveryKnownSolution_HasNoConflict()
         {
             foreach (string solution in KnownSolutions)
             {
-                Assert.IsFalse(HasConflictOneQueenPerRow(Parse(solution)),
+                Assert.False(HasConflictOneQueenPerRow(Parse(solution)),
                     "Known solution reported as a conflict: " + solution);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void EnumeratedSolutions_AreExactlyTheKnownSolutions()
         {
             //Nothing is missing from the list and nothing extra is accepted by CheckSolution
@@ -149,10 +148,10 @@ namespace EightQueens.Tests
                     .Where(p => !HasConflictOneQueenPerRow(p))
                     .Select(p => string.Concat(p)));
 
-            Assert.IsTrue(found.SetEquals(KnownSolutions));
+            Assert.True(found.SetEquals(KnownSolutions));
         }
 
-        [TestMethod]
+        [Fact]
         public void KnownSolutions_FormTwelveFundamentalSolutions()
         {
             //Wikipedia: 12 fundamental solutions, 11 with 8 variants and 1 symmetric one with 4 (11 x 8 + 4 = 92)
@@ -162,14 +161,14 @@ namespace EightQueens.Tests
             while (remaining.Count > 0)
             {
                 HashSet<string> variants = new HashSet<string>(Symmetries(Parse(remaining.First())));
-                Assert.IsTrue(variants.IsSubsetOf(remaining), "Symmetric variant is not a known solution");
+                Assert.True(variants.IsSubsetOf(remaining), "Symmetric variant is not a known solution");
                 remaining.ExceptWith(variants);
                 classSizes.Add(variants.Count);
             }
 
-            Assert.AreEqual(12, classSizes.Count);
-            Assert.AreEqual(11, classSizes.Count(size => size == 8));
-            Assert.AreEqual(1, classSizes.Count(size => size == 4));
+            Assert.Equal(12, classSizes.Count);
+            Assert.Equal(11, classSizes.Count(size => size == 8));
+            Assert.Equal(1, classSizes.Count(size => size == 4));
         }
 
         //The 4 rotations and their mirror images, as strings in the same format as KnownSolutions
