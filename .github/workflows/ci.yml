@@ -21,6 +21,11 @@ jobs:
       - name: Build
         run: dotnet build EightQueens.sln --configuration Release
 
+      # Tests and coverage run in the next step, so skip them here
+      - name: Code analysis
+        shell: pwsh
+        run: ./tools/analyze.ps1 -SkipTests
+
       - name: Test with coverage
         run: dotnet test EightQueens.sln --configuration Release --no-build --collect:"XPlat Code Coverage" --settings coverage.runsettings --results-directory TestResults
 

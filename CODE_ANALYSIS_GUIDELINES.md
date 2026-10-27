@@ -86,9 +86,12 @@ At the time of writing:
 - Line coverage is 19.3% (63 of 325 coverable lines); the form logic is the main gap.
 - The only deprecated packages are xunit v2 packages and `System.Collections.Immutable` 1.5.0, all flagged `Legacy`.
 
+## CI
+
+`.github/workflows/ci.yml` runs `./tools/analyze.ps1 -SkipTests` after the build, so analyzer warnings, formatting drift and vulnerable or non-Legacy deprecated packages fail the pipeline. Tests and coverage keep their own step.
+
 ## Not done yet
 
-- The script is not wired into `.github/workflows/ci.yml`. CI currently only builds and runs tests with coverage. Running `pwsh tools/analyze.ps1` there would add the analyzer, format and package checks.
 - No coverage threshold is enforced.
 - No third-party analyzers (Roslynator, StyleCop, SonarAnalyzer) have been added.
 - The transitive-deprecation check has only been tested against the current packages and against a simulated row, not against a real `CriticalBugs` package.
